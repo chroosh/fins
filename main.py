@@ -13,7 +13,8 @@ todo:
     - more etl (file i/o and dropna)
     - plotting utility (standard and normalisedkj)
 - station 3: model design
-    - TODO model utility
+    - model utility
+    - basic universal model
     - TODO actual models for commodities, weather, cash flow
     - TODO refactor model utility after implementing models
 - station 4: implementation

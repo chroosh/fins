@@ -147,7 +147,10 @@ def predictSinglePtForward(dataset):
 
 def predictForward(dataset, future_target):
     '''
-    Multi step prediction model - 5 observations forward
+    Multi step prediction model
+
+    :param pandas.DataFrame dataset: Dataset to be used to predict forward
+    :param int future_target: How many steps to predict into the future
     '''
     x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1], 0,
                                                      TRAIN_SPLIT, past_history,
@@ -166,11 +169,16 @@ def predictForward(dataset, future_target):
         multi_step_plot(x[0], y[0], np.array([0]))
 
     multi_step_model = tf.keras.models.Sequential()
+    '''
+    # how does the number of starting units affect the RNN prediction
+    # how does the number of layers affect the RNN prediction
+    # how does dropout affect RNN prediction
+    '''
     multi_step_model.add(tf.keras.layers.LSTM(16, input_shape=x_train_multi.shape[-2:]))
     multi_step_model.add(tf.keras.layers.Dropout(0.5))
     #  multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
     #  multi_step_model.add(tf.keras.layers.Dropout(0.5))
-    multi_step_model.add(tf.keras.layers.Dense(5))
+    multi_step_model.add(tf.keras.layers.Dense(future_target))
 
     multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 

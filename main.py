@@ -4,22 +4,37 @@ import matplotlib.pyplot as plt
 '''
 Feature Engineering
 
-more etl
-- xlsx conversion to csv, removing graphs
-- convert open interest in commodities.xlsx to remove comma separator
-- convert
-- dropna used to remove missing values
 
-todo
+issues:
+- duplicate featureEngineering.plotNormalised and modelDesign.normaliseData
+
+todo:
+- station 2: feature engineering:
+    - more etl (file i/o and dropna)
+    - plotting utility (standard and normalisedkj)
 - station 3: model design
+    - TODO model utility
+    - TODO actual models for commodities, weather, cash flow
+    - TODO refactor model utility after implementing models
 - station 4: implementation
+    - models currently only predicts the next 5 values out of a training subsample that you already know  
+    - somehow we need to setup and train our model, and then save the "parameters" to run on the last 50 to predict the next 5
 - station 5: the endgame xD
+    - lol
+
+- sentiment analysis
+- report
 '''
 
 files = "files/"
 
 
-
+'''
+ETL precondition
+- xlsx converted to csv, remove graphs and move data to top left cell
+- modified 'Open Interest' column in 'WHEAT_pricehistory.csv' and 'CORN_pricehistory.csv' files to remove comma separator
+- modified 'Minimum temperature (C)' and 'Maximum temperature (C)' in 'Weather.csv' file to remove degree character
+'''
 def etl(filename: str) -> pd.DataFrame:
     '''
     Opens filename and drops invalid values
@@ -51,8 +66,7 @@ def plotFeatures(features, index):
     plt.show()
 
 
-
-def plotNormalised(features):
+def plotNormalised(features)-> pd.DataFrame.values:
     '''
     Plots the normalised values of features
 
@@ -68,56 +82,53 @@ def plotNormalised(features):
     plt.plot(dataset)
     plt.show()
 
+    return dataset
 
-'''
-for commodities, we look at continuous price "last" and the volume "open interest" and plot them separately for feature engineering purposes
-
-however, beacuse of the differing order of magnitudes bewteen the features, they can't be plotted on the same graph for comparison. the data needs to be normalised
-
-this is essential for the extraction of seasonlity and "unwanted" deviations for RNN modelling
-'''
-def commodityFeatures(commodity: str):
+def commodityFeatures(commodityFile: str, features_considered: []) -> pd.DataFrame:
     '''
     Feature engineering (continuous price and volume) for given corn and wheat commodities
+
+    :param string commodityFile: Filename containing raw data
+    :return pandas.DataFrame features
     '''
 
-    df = etl(commodity)
-
-    features_considered = ['Last', 'Open Interest']
+    df = etl(commodityFile)
     features = df[features_considered]
 
     print("Plotting commodities")
     plotFeatures(features, df['Date'])
     plotNormalised(features)
 
+    return features
 
-'''
-for weather, we look at the average temperature and the rainfall
 
-again we need to normalise to visualise both features on the same graph
-'''
-def weatherFeatures():
+def weatherFeatures(weatherFile: str, features_considered: []) -> pd.DataFrame:
     '''
-    Feature engineering (average temperature and rainfall) for given weather data
+    Feature engineering (average temperature) for given weather data
+
+    :param string weatherFile: Filename containing raw data
+    :return pandas.DataFrame weatherFeatures: The pandas df containing selected weather features
     '''
 
-    weatherDF = etl("Weather.csv")
+    df = etl(weatherFile)
 
-    weatherDF['AvgTemp'] = (weatherDF['Minimum temperature (C)'] + weatherDF['Maximum temperature (C)']) / 2
-    features_considered = ['AvgTemp', 'Rainfall (mm)']
-    weatherFeatures = weatherDF[features_considered]
+    # Given min/max temperature, take average
+    df['AvgTemp'] = (df['Minimum temperature (C)'] + df['Maximum temperature (C)']) / 2
+    features = df[features_considered]
 
     print("Plotting weather")
-    plotFeatures(weatherFeatures, weatherDF['Date'])
-    plotNormalised(weatherFeatures)
+    plotFeatures(features, df['Date'])
+    plotNormalised(features)
+
+    return features
 
 
 def main():
 
     # Station 2: Feature Engineering
-    commodityFeatures("WHEAT_pricehistory.csv")
-    commodityFeatures("CORN_pricehistory.csv")
-    weatherFeatures()
+    commodityFeatures("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
+    commodityFeatures("CORN_pricehistory.csv", ['Last', 'Open Interest'])
+    weatherFeatures("Weather.csv", ['AvgTemp'])
 
     # Station 3: Model Design
 

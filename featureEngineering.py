@@ -3,28 +3,6 @@ import matplotlib.pyplot as plt
 
 '''
 Feature Engineering
-
-
-issues:
-- duplicate featureEngineering.plotNormalised and modelDesign.normaliseData
-
-todo:
-- station 2: feature engineering:
-    - more etl (file i/o and dropna)
-    - plotting utility (standard and normalisedkj)
-- station 3: model design
-    - model utility
-    - basic universal model
-    - TODO actual models for commodities, weather, cash flow
-    - TODO refactor model utility after implementing models
-- station 4: implementation
-    - models currently only predicts the next 5 values out of a training subsample that you already know  
-    - somehow we need to setup and train our model, and then save the "parameters" to run on the last 50 to predict the next 5
-- station 5: the endgame xD
-    - lol
-
-- sentiment analysis
-- report
 '''
 
 files = "files/"
@@ -140,8 +118,6 @@ def main():
     commodityFeatures("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
     commodityFeatures("CORN_pricehistory.csv", ['Last', 'Open Interest'])
     weatherFeatures("Weather.csv", ['AvgTemp'])
-
-    # Station 3: Model Design
 
 if __name__ == "__main__":
     main()

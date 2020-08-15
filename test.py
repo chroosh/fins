@@ -230,7 +230,7 @@ def predictWheatForward(dataset, future_target):
 
     multi_step_model = tf.keras.models.Sequential()
     # experimental values
-    multi_step_model.add(tf.keras.layers.LSTM(10, input_shape=x_train_multi.shape[-2:]))
+    multi_step_model.add(tf.keras.layers.LSTM(8, input_shape=x_train_multi.shape[-2:]))
     multi_step_model.add(tf.keras.layers.Dropout(0.8))
     multi_step_model.add(tf.keras.layers.Dense(future_target))
 

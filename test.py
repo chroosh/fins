@@ -6,7 +6,7 @@ import os
 import pandas as pd
 
 # importing utility functions from main
-from main import etl, weatherFeatures, commodityFeatures
+from featureEngineering import etl, weatherFeatures, commodityFeatures
 
 # Constants
 TRAIN_SPLIT = 300
@@ -145,9 +145,14 @@ def predictSinglePtForward(dataset):
                           single_step_model.predict(x)[0]], 5,
                          'Single Step Prediction')
 
-def predictForward(dataset, future_target):
+def predictCornForward(dataset, future_target):
     '''
-    Multi step prediction model
+    Multi step prediction model for commodities
+    
+    Commodities are typically driven by factors such as:
+    - Supply and demand
+    - Value of the US dollar (as most commodities are priced in US dollars)
+    - TODO what is cvol?
 
     :param pandas.DataFrame dataset: Dataset to be used to predict forward
     :param int future_target: How many steps to predict into the future
@@ -169,17 +174,16 @@ def predictForward(dataset, future_target):
         multi_step_plot(x[0], y[0], np.array([0]))
 
     multi_step_model = tf.keras.models.Sequential()
-    '''
-    # how does the number of starting units affect the RNN prediction
-    # how does the number of layers affect the RNN prediction
-    # how does dropout affect RNN prediction
-    '''
-    multi_step_model.add(tf.keras.layers.LSTM(16, input_shape=x_train_multi.shape[-2:]))
-    multi_step_model.add(tf.keras.layers.Dropout(0.5))
-    #  multi_step_model.add(tf.keras.layers.LSTM(16, activation='relu'))
-    #  multi_step_model.add(tf.keras.layers.Dropout(0.5))
+    # experimental values
+    multi_step_model.add(tf.keras.layers.LSTM(5, input_shape=x_train_multi.shape[-2:]))
+    multi_step_model.add(tf.keras.layers.Dropout(0.7))
     multi_step_model.add(tf.keras.layers.Dense(future_target))
 
+
+    '''
+    compiles a model with loss calculated from mean absolute error - what does ['acc'] measure?
+    '''
+    # OG:
     multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
 
     multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
@@ -188,8 +192,68 @@ def predictForward(dataset, future_target):
                                               validation_steps=50)
 
     for x, y in val_data_multi.take(3):
+        '''
+        I think something in here holds the key to implementing the the model on a new set of data
+        - multi_step_mode.predict(x)[0] <--- what does this do?
+        '''
         multi_step_plot(x[0], y[0], multi_step_model.predict(x)[0])
     plot_train_history(multi_step_history, 'Multi-Step Training and validation loss')
+
+
+def predictWheatForward(dataset, future_target):
+    '''
+    Multi step prediction model for commodities
+    
+    Commodities are typically driven by factors such as:
+    - Supply and demand
+    - Value of the US dollar (as most commodities are priced in US dollars)
+    - TODO what is cvol?
+
+    :param pandas.DataFrame dataset: Dataset to be used to predict forward
+    :param int future_target: How many steps to predict into the future
+    '''
+    x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 1], 0,
+                                                     TRAIN_SPLIT, past_history,
+                                                     future_target, STEP)
+    x_val_multi, y_val_multi = multivariate_data(dataset, dataset[:, 1],
+                                                 TRAIN_SPLIT, None, past_history,
+                                                 future_target, STEP)
+
+    train_data_multi = tf.data.Dataset.from_tensor_slices((x_train_multi, y_train_multi))
+    train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
+
+    val_data_multi = tf.data.Dataset.from_tensor_slices((x_val_multi, y_val_multi))
+    val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
+
+    for x, y in train_data_multi.take(1):
+        multi_step_plot(x[0], y[0], np.array([0]))
+
+    multi_step_model = tf.keras.models.Sequential()
+    # experimental values
+    multi_step_model.add(tf.keras.layers.LSTM(10, input_shape=x_train_multi.shape[-2:]))
+    multi_step_model.add(tf.keras.layers.Dropout(0.8))
+    multi_step_model.add(tf.keras.layers.Dense(future_target))
+
+
+    '''
+    compiles a model with loss calculated from mean absolute error - what does ['acc'] measure?
+    '''
+    # OG:
+    multi_step_model.compile(optimizer=tf.keras.optimizers.RMSprop(clipvalue=1.0), loss='mae')
+
+    multi_step_history = multi_step_model.fit(train_data_multi, epochs=EPOCHS,
+                                              steps_per_epoch=EVALUATION_INTERVAL,
+                                              validation_data=val_data_multi,
+                                              validation_steps=50)
+
+    for x, y in val_data_multi.take(3):
+        '''
+        I think something in here holds the key to implementing the the model on a new set of data
+        - multi_step_mode.predict(x)[0] <--- what does this do?
+        '''
+        multi_step_plot(x[0], y[0], multi_step_model.predict(x)[0])
+    plot_train_history(multi_step_history, 'Multi-Step Training and validation loss')
+
 
 
 def main():
@@ -199,9 +263,10 @@ def main():
     #  predictFivePtForward(normaliseData(avgTemp))
 
 
-    cornPrice = commodityFeatures("CORN_pricehistory.csv", ['Last', 'Open Interest'])
-    predictForward(normaliseData(cornPrice), 5)
-    #  wheatPrice = commodityFeatures("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
+    #  cornPrice = commodityFeatures("CORN_pricehistory.csv", ['Last', 'Open Interest'])
+    #  predictCornForward(normaliseData(cornPrice), 10)
+    wheatPrice = commodityFeatures("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
+    predictWheatForward(normaliseData(wheatPrice), 10)
 
 
     pass

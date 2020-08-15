@@ -85,29 +85,36 @@ def plotNormalised(features)-> pd.DataFrame.values:
 
     return dataset
 
-def commodityFeatures(commodityFile: str, features_considered: []) -> pd.DataFrame:
+def commodityFeatures(commodityFile: str, featuresConsidered: [], plot=False) -> pd.DataFrame:
     '''
     Feature engineering (continuous price and volume) for given corn and wheat commodities
 
     :param string commodityFile: Filename containing raw data
+    :param array featuresConsidered: Array containing features to be considered
+    :param bool plot: Set to true to plot features, false otherwise
+
     :return pandas.DataFrame features
     '''
 
     df = etl(commodityFile)
-    features = df[features_considered]
+    features = df[featuresConsidered]
 
-    print("Plotting commodities")
-    plotFeatures(features, df['Date'])
-    plotNormalised(features)
+    if plot:
+        print("Plotting commodities")
+        plotFeatures(features, df['Date'])
+        plotNormalised(features)
 
     return features
 
 
-def weatherFeatures(weatherFile: str, features_considered: []) -> pd.DataFrame:
+def weatherFeatures(weatherFile: str, featuresConsidered: [], plot=False) -> pd.DataFrame:
     '''
     Feature engineering (average temperature) for given weather data
 
     :param string weatherFile: Filename containing raw data
+    :param array featuresConsidered: Array containing features to be considered
+    :param bool plot: Set to true to plot features, false otherwise
+
     :return pandas.DataFrame weatherFeatures: The pandas df containing selected weather features
     '''
 
@@ -115,15 +122,18 @@ def weatherFeatures(weatherFile: str, features_considered: []) -> pd.DataFrame:
 
     # Given min/max temperature, take average
     df['AvgTemp'] = (df['Minimum temperature (C)'] + df['Maximum temperature (C)']) / 2
-    features = df[features_considered]
+    features = df[featuresConsidered]
 
-    print("Plotting weather")
-    plotFeatures(features, df['Date'])
-    plotNormalised(features)
+    if plot:
+        print("Plotting weather")
+        plotFeatures(features, df['Date'])
+        plotNormalised(features)
 
     return features
 
 
+
+# TODO should not be run as a standalone
 def main():
 
     # Station 2: Feature Engineering

@@ -30,8 +30,8 @@ Todo:
     - DONE model utility
     - DONE basic universal model
     - TODO specific models for commodities, weather, cash flow
+			- tuning features considered for model
       - hyperparameter tuning
-      - features considered tuning
     - TODO refactor model utility after implementing models
 - station 4: implementation
     - models currently only predicts the next 5 values out of a training subsample that you already know  
@@ -41,4 +41,3 @@ Todo:
 
 - sentiment analysis
 - report
-

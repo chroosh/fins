@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 
 '''
 Feature Engineering
+
+Provides utility for feature engineering:
+- File I/O
+- Feature plotting and normalisation
 '''
 
 files = "files/"
@@ -50,6 +54,7 @@ def plotNormalised(features)-> pd.DataFrame.values:
     Plots the normalised values of features
 
     :param pandas.DataFrame features: The features to be normalised
+    :return pandas.DataFrame.values dataset: Normalised value of dataset
     '''
     dataset = features.values
     data_mean = dataset.mean(axis=0)
@@ -109,6 +114,10 @@ def weatherFeatures(weatherFile: str, featuresConsidered: [], plot=False) -> pd.
 
     return features
 
+
+# TODO
+def cashFeatures():
+    pass
 
 
 # TODO should not be run as a standalone

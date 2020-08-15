@@ -7,10 +7,14 @@ _I lowkey dont know what I'm doing_
 - Predict future cash flows of a client given client cash account data ("Client_Cash_Accounts.xlsx")
 - Perform sentiment analysis on "Commodity.json"
 
+
+## Aim
 The aim of this is to build a "financial product" for a neobank with agricultural clients. I guess the product could vary from simple predictive dashboards to more complex insurance/hedging products for long(er?) term predictions.
 
 
 ## Notes
+
+### Basic Use /
 LSTM RNN's can be used to predict future commodity prices, average temperature and cash flow data. Something something about it being good with time series data.
 
 Wiki link:
@@ -24,20 +28,40 @@ Issues:
 
 Todo:
 - station 2: feature engineering:
-    - DONE more etl (file i/o and dropna)
+    - DONE more etl utility (file i/o and dropna)
     - DONE plotting utility (standard and normalised)
+
+		- feature engineering
+			- DONE commodities
+			- DONE weather
+			- cash flow
+			- sentiment
+
 - station 3: model design
-    - DONE model utility
-    - DONE basic universal model
-    - TODO specific models for commodities, weather, cash flow
-			- tuning features considered for model
-      - hyperparameter tuning
+    - DONE model utility (ported from JH code)
+    - DONE basic LSTM RNN
+    - TODO specific models for 
+			- commodities
+				- feature selection
+				- hyperparameter tuning
+			- weather
+				- feature selection
+				- hyperparameter tuning
+			- cash flow
+				- feature selection
+				- hyperparameter tuning
+			- sentiment
+				- feature selection
+				- hyperparameter tuning
+
     - TODO refactor model utility after implementing models
 - station 4: implementation
-    - models currently only predicts the next 5 values out of a training subsample that you already know  
-    - somehow we need to setup and train our model, and then save the "parameters" to run on the last 50 to predict the next 5
-- station 5: the endgame xD
-    - building the actual product
+	- model needs to predict next 10 values after last date in dataset
+		- commodities
+		- weather
+		- cash flow
 
-- sentiment analysis
+- station 5: the endgame xD
+  - building the actual product
+
 - report

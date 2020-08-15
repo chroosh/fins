@@ -36,7 +36,7 @@ def etl(filename: str) -> pd.DataFrame:
     return df
 
 
-def plotFeatures(features, index):
+def plot_features(features, index):
     '''
     Plot the values of a features
 
@@ -49,7 +49,7 @@ def plotFeatures(features, index):
     plt.show()
 
 
-def plotNormalised(features)-> pd.DataFrame.values:
+def plot_normalised(features)-> pd.DataFrame.values:
     '''
     Plots the normalised values of features
 
@@ -68,55 +68,58 @@ def plotNormalised(features)-> pd.DataFrame.values:
 
     return dataset
 
-def commodityFeatures(commodityFile: str, featuresConsidered: [], plot=False) -> pd.DataFrame:
+def commodity_features(commodity_file: str, features_considered: [], plot=False) -> pd.DataFrame:
     '''
     Feature engineering (continuous price and volume) for given corn and wheat commodities
 
-    :param string commodityFile: Filename containing raw data
-    :param array featuresConsidered: Array containing features to be considered
+    :param string commodity_file: Filename containing raw data
+    :param array features_considered: Array containing features to be considered
     :param bool plot: Set to true to plot features, false otherwise
 
     :return pandas.DataFrame features
     '''
 
-    df = etl(commodityFile)
-    features = df[featuresConsidered]
+    df = etl(commodity_file)
+    features = df[features_considered]
 
     if plot:
         print("Plotting commodities")
-        plotFeatures(features, df['Date'])
-        plotNormalised(features)
+        plot_features(features, df['Date'])
+        plot_normalised(features)
 
     return features
 
 
-def weatherFeatures(weatherFile: str, featuresConsidered: [], plot=False) -> pd.DataFrame:
+def weather_features(weather_file: str, features_considered: [], plot=False) -> pd.DataFrame:
     '''
     Feature engineering (average temperature) for given weather data
 
-    :param string weatherFile: Filename containing raw data
-    :param array featuresConsidered: Array containing features to be considered
+    :param string weather_file: Filename containing raw data
+    :param array features_considered: Array containing features to be considered
     :param bool plot: Set to true to plot features, false otherwise
 
     :return pandas.DataFrame weatherFeatures: The pandas df containing selected weather features
     '''
 
-    df = etl(weatherFile)
+    df = etl(weather_file)
 
     # Given min/max temperature, take average
     df['AvgTemp'] = (df['Minimum temperature (C)'] + df['Maximum temperature (C)']) / 2
-    features = df[featuresConsidered]
+    features = df[features_considered]
 
     if plot:
         print("Plotting weather")
-        plotFeatures(features, df['Date'])
-        plotNormalised(features)
+        plot_features(features, df['Date'])
+        plot_normalised(features)
 
     return features
 
 
 # TODO
-def cashFeatures():
+def cash_features(cash_file: str, features_considered: [], plot=False) -> pd.DataFrame:
+    '''
+    Feature engineering () for given cash flow
+    '''
     pass
 
 
@@ -124,9 +127,9 @@ def cashFeatures():
 def main():
 
     # Station 2: Feature Engineering
-    commodityFeatures("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
-    commodityFeatures("CORN_pricehistory.csv", ['Last', 'Open Interest'])
-    weatherFeatures("Weather.csv", ['AvgTemp'])
+    commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
+    commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'])
+    weather_features("Weather.csv", ['AvgTemp'])
 
 if __name__ == "__main__":
     main()

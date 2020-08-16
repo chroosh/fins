@@ -34,16 +34,16 @@ Todo:
 		- feature engineering
 			- DONE commodities
 			- DONE weather
-			- cash flow
-			- sentiment
+			- DONE cash flow
+			- DONE sentiment
 
 - station 3: model design
     - DONE model utility (ported from JH code)
     - DONE basic LSTM RNN
     - TODO specific models for 
 			- commodities
-				- feature selection
-				- hyperparameter tuning
+				- ISH feature selection
+				- ISH hyperparameter tuning
 			- weather
 				- feature selection
 				- hyperparameter tuning
@@ -54,7 +54,7 @@ Todo:
 				- feature selection
 				- hyperparameter tuning
 
-    - TODO refactor model utility after implementing models
+    - DONE refactor model utility after implementing models
 - station 4: implementation
 	- model needs to predict next 10 values after last date in dataset
 		- commodities

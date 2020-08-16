@@ -17,10 +17,14 @@ EPOCHS = 5
 Commodity Price Predictions:
 
 Commodities are typically driven by supply (volume) and demand (sentiment)
-
-TODO
-- abbreviate function calls
 '''
+
+def predict_temperature_forward(dataset):
+    '''
+    Multi step prediction model for average temperature
+    
+    :param pandas.DataFrame dataset: Dataset to be used, target in first column
+    '''
 
 def predict_corn_forward(dataset):
     '''
@@ -61,8 +65,8 @@ def predict_wheat_forward(dataset):
     RNN_inputs = RNN_preprocessing(dataset, True)
 
     model = Sequential()
-    model.add(LSTM(10, input_shape=RNN_inputs.input_shape))
-    model.add(Dropout(0.7))
+    model.add(LSTM(12, input_shape=RNN_inputs.input_shape))
+    model.add(Dropout(0.6))
     model.add(Dense(FUTURE_TARGET))
 
     model.compile(optimizer=RMSprop(clipvalue=1.0), loss='mae', metrics=['acc'])
@@ -91,6 +95,7 @@ def main():
 
     # Wheat
     wheat_price = commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
+    print(wheat_price)
     predict_wheat_forward(normalise_train_data(wheat_price))
 
     pass

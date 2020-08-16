@@ -4,7 +4,7 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import LSTM, Dropout, Dense
 from tensorflow.keras.optimizers import RMSprop
 
-# importing utility
+# importing utility from modelDesignUtility.py
 from featureEngineering import etl, weather_features, commodity_features, cash_features, sentiment_features
 from modelDesignUtility import RNN_input, RNN_preprocessing, multi_step_plot, plot_train_history, show_plot
 
@@ -71,7 +71,7 @@ def predict_corn_forward(dataset):
     '''
     TRAIN_SPLIT = 300
     PAST_HISTORY = 60
-    FUTURE_TARGET = 30
+    FUTURE_TARGET = 10
     
     RNN_inputs = RNN_preprocessing(dataset, TRAIN_SPLIT, PAST_HISTORY, FUTURE_TARGET, True)
 
@@ -106,13 +106,13 @@ def predict_wheat_forward(dataset):
 
     TRAIN_SPLIT = 300
     PAST_HISTORY = 60
-    FUTURE_TARGET = 30
+    FUTURE_TARGET = 10
     
     RNN_inputs = RNN_preprocessing(dataset, TRAIN_SPLIT, PAST_HISTORY, FUTURE_TARGET, True)
 
     model = Sequential()
-    model.add(LSTM(12, input_shape=RNN_inputs.input_shape))
-    model.add(Dropout(0.6))
+    model.add(LSTM(9, input_shape=RNN_inputs.input_shape))
+    model.add(Dropout(0.7))
     model.add(Dense(FUTURE_TARGET))
 
     model.compile(optimizer=RMSprop(clipvalue=1.0), loss='mae', metrics=['acc'])
@@ -159,7 +159,7 @@ def predict_cash_forward(dataset):
     Multi step prediction model for Cash flow
     
     :param pandas.DataFrame dataset: Dataset to be used, target in first column
-    :return tensorflow.keras.Model model: Trained cash flow prediction model
+    :return tensorflow.keras.Model model: Trained model 
     '''
 
     TRAIN_SPLIT = 60
@@ -197,12 +197,12 @@ def main():
     #  predict_temperature_forward(avg_temp)
 
     # Corn
-    corn_price = commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'])
-    predict_corn_forward(corn_price)
+    #  corn_price = commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'])
+    #  predict_corn_forward(corn_price)
 
     # Wheat
     wheat_price = commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
-    predict_wheat_forward(normalise_train_data(wheat_price))
+    predict_wheat_forward((wheat_price))
 
 
     # Sentiment

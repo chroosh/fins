@@ -178,7 +178,6 @@ def cash_features(cash_file: str, pages_considered: [], features_considered: [],
     # select only features considered from pages considered
     features = {}
     for each in pages_considered:
-        #  print(d[each][features_considered])
         features[each] = d[each][features_considered]
         features[each].index = d[each]['Date']
         if plot:
@@ -194,7 +193,7 @@ def sentiment_features(sentiment_file: str, features_considered: []):
     Feature engineering for given commodity news
 
     :param string sentiment_file: Filename of file containing raw data
-    :return dict d: json-ified sentiment file
+    :return pandas.DataFrame features: jsonified news into pandas dataframe
     '''
     df = etl(sentiment_file)
     

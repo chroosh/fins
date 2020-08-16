@@ -48,8 +48,7 @@ Todo:
 				- DONE feature selection
 				- ISH hyperparameter tuning
 			- sentiment
-				- feature selection
-				- hyperparameter tuning
+				- DONE analysis
 			- cash flow
 				- feature selection, prereq: commodity, weather, sentiment
 					-  how do you use other models to do this?

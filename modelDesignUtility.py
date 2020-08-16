@@ -9,8 +9,34 @@ BUFFER_SIZE = 1000
 STEP = 1
 
 # Utility functions
-def multivariate_data(dataset, target, start, end, history_size, target_size, step, single_step=False):
+def univariate_data(dataset, start_index, end_index, history_size, target_size):
+    '''
+    Univariate data
 
+    :param pandas.DataFrame.values dataset: Normalised values of dataset
+    :param pandas.DataFrame.values[:, x] target: Target column of to predict
+    :param int start: Start value
+    :param int end: End value
+    :param int history_size: Size of past history
+    :param int target_size: Size of future target to predict
+
+    :return np.array data: Return data
+    :return np.array labels: Return labels
+    '''
+    data = []
+    labels = []
+    start_index = start_index + history_size
+    if end_index is None:
+        end_index = len(dataset) - target_size
+
+    for i in range(start_index, end_index):
+        indices = range(i-history_size, i)
+        # Reshape data from (history_size,) to (history_size, 1)
+        data.append(np.reshape(dataset[indices], (history_size, 1)))
+        labels.append(dataset[i+target_size])
+    return np.array(data), np.array(labels)
+
+def multivariate_data(dataset, target, start, end, history_size, target_size, step, single_step=False):
     '''
     Multivariate_data
 
@@ -103,6 +129,7 @@ def multi_step_plot(history, true_future, prediction):
     plt.show()
 
 
+
 def normalise_train_data(features, TRAIN_SPLIT: int) -> pd.DataFrame:
     '''
     This is a soft duplicate of plot_normalised from featureEngineering.py
@@ -141,24 +168,33 @@ def RNN_preprocessing(dataset, TRAIN_SPLIT: int, PAST_HISTORY: int, FUTURE_TARGE
 
     dataset = normalise_train_data(dataset, TRAIN_SPLIT)
 
-    x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 0], 0,
-                                                     TRAIN_SPLIT, PAST_HISTORY,
+    
+    if dataset.shape[1] > 1:
+        x_train, y_train = multivariate_data(dataset, dataset[:, 0], 0,
+                                                         TRAIN_SPLIT, PAST_HISTORY,
+                                                         FUTURE_TARGET, STEP)
+        x_val, y_val = multivariate_data(dataset, dataset[:, 0],
+                                                     TRAIN_SPLIT, None, PAST_HISTORY,
                                                      FUTURE_TARGET, STEP)
-    x_val_multi, y_val_multi = multivariate_data(dataset, dataset[:, 0],
-                                                 TRAIN_SPLIT, None, PAST_HISTORY,
-                                                 FUTURE_TARGET, STEP)
+    else:
+        x_train, y_train = univariate_data(dataset, 0, TRAIN_SPLIT,
+                                                   PAST_HISTORY, FUTURE_TARGET)
+        x_val, y_val = univariate_data(dataset, TRAIN_SPLIT, None,
+                                               PAST_HISTORY, FUTURE_TARGET)
 
 
-    train_data_multi = Dataset.from_tensor_slices((x_train_multi, y_train_multi))
-    train_data_multi = train_data_multi.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
 
-    val_data_multi = Dataset.from_tensor_slices((x_val_multi, y_val_multi))
-    val_data_multi = val_data_multi.batch(BATCH_SIZE).repeat()
 
-    if plot:
-        for x, y in train_data_multi.take(1):
+    train_data = Dataset.from_tensor_slices((x_train, y_train))
+    train_data = train_data.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
+
+    val_data = Dataset.from_tensor_slices((x_val, y_val))
+    val_data = val_data.batch(BATCH_SIZE).repeat()
+
+    if plot and dataset.shape[1] > 1:
+        for x, y in train_data.take(1):
             multi_step_plot(x[0], y[0], np.array([0]))
 
-    return RNN_input(train_data_multi, val_data_multi, x_train_multi.shape[-2:])
+    return RNN_input(train_data, val_data, x_train.shape[-2:])
 
 

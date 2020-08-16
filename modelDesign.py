@@ -1,31 +1,31 @@
+import numpy as np
 from tensorflow.random import set_seed
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import LSTM, Dropout, Dense
 from tensorflow.keras.optimizers import RMSprop
 
 # importing utility
-from featureEngineering import etl, weather_features, commodity_features
+from featureEngineering import etl, weather_features, commodity_features, cash_features, sentiment_features
 from modelDesignUtility import RNN_input, RNN_preprocessing, multi_step_plot, plot_train_history
+
 
 # RNN Constants
 set_seed(88)
 EVALUATION_INTERVAL = 200
 EPOCHS = 5
 
-
 '''
-Commodity Price Predictions:
+Weather Average Temperature Predictions:
 
-Commodities are typically driven by supply (volume) and demand (sentiment)
+Using the following factors:
+- Rainfall (mm)
+- Maximum wind gust (as Wx, Wy vectors)
+- 9am relative humidity (%)
 '''
-
 def predict_temperature_forward(dataset):
     '''
     Multi step prediction model for average temperature using
-    - Rainfall (mm)
-    - Maximum wind gust (as Wx, Wy vectors)
-    - 9am relative humidity ()
-    
+   
     :param pandas.DataFrame dataset: Dataset to be used, target in first column
     '''
 
@@ -56,7 +56,11 @@ def predict_temperature_forward(dataset):
     plot_train_history(history, 'Multi-Step Training and validation loss')
 
 
+'''
+Commodity Price Predictions:
 
+Commodities are typically driven by supply (volume) and demand (sentiment)
+'''
 def predict_corn_forward(dataset):
     '''
     Multi step prediction model for CORN
@@ -120,12 +124,24 @@ def predict_wheat_forward(dataset):
     plot_train_history(history, 'Multi-Step Training and validation loss')
 
 
-def sentiment_analysis(d: dict):
+'''
+Sentiment Analysis:
+Using NLTK Vader
+'''
+import nltk
+nltk.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+sid = SentimentIntensityAnalyzer()
+
+def sentiment_analysis(dataset):
     '''
     Sentiment analysis for Commodity news
+
+    :param pandas.DataFrame dataset: Dataset to be used
     '''
 
-    pass
+    for headline in dataset.values:
+        print(sid.polarity_scores(headline[0]))
 
 
 
@@ -143,6 +159,10 @@ def main():
     #  wheat_price = commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
     #  predict_wheat_forward(normalise_train_data(wheat_price))
 
+
+    # Sentiment
+    commodity_news = sentiment_features("Commodity_News.json", ['Headline'])
+    sentiment_analysis(commodity_news)
 
 
 

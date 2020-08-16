@@ -28,7 +28,7 @@ def etl(filename: str) -> pd.DataFrame:
     Note: untested for single-page xlsx
     
     :param string filename: The name of the data file to be opened
-    :return pandas.DataFrame df: Dataframe containing loaded and cleaned data (csv)
+    :return pandas.DataFrame df: Dataframe containing loaded and cleaned data (csv or json)
     :return dict d: Dictionary containing loaded and cleaned dataframes for each page (xlsx)
     '''
 
@@ -53,9 +53,8 @@ def etl(filename: str) -> pd.DataFrame:
             clean(d[each])
         return d
     elif filetype == 'json':
-        f = open(files + filename, "r")
-        d = json.loads(f.read())
-        return d
+        df = pd.read_json(files + filename)
+        return df
         
 
 def plot_features(features):
@@ -171,6 +170,8 @@ def cash_features(cash_file: str, pages_considered: [], features_considered: [],
     :param string cash_file: Filename of file containing raw data
     :param features_considered: Array containing features to be considered
     :param bool plot: Set to true to plot features, false otherwise
+
+    :return dict features: Dictionary containing features of each client
     '''
     d = etl(cash_file)
 
@@ -188,15 +189,19 @@ def cash_features(cash_file: str, pages_considered: [], features_considered: [],
     return features
 
 
-def sentiment_features(sentiment_file: str):
+def sentiment_features(sentiment_file: str, features_considered: []):
     '''
     Feature engineering for given commodity news
 
     :param string sentiment_file: Filename of file containing raw data
+    :return dict d: json-ified sentiment file
     '''
-    d = etl(sentiment_file)
+    df = etl(sentiment_file)
     
-    return d
+    features = df[features_considered]
+    features.index = df['Date']
+    
+    return features
 
 
 # Testing only
@@ -207,7 +212,7 @@ def main():
     #  commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'], True)
     #  weather_features("Weather.csv", ['AvgTemp', 'Rainfall (mm)', 'max Wx', 'max Wy', '9am relative humidity (%)'], True)
     #  cash_features("Client_Cash_Accounts.xlsx", ['1x', '2x', '3x', '4x', '5x'], ['Cash Balance'], True)
-    #  sentiment_features("Commodity_News.json")
+    #  sentiment_features("Commodity_News.json", ['Headline'])
 
     pass
 

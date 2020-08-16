@@ -207,11 +207,11 @@ def sentiment_features(sentiment_file: str, features_considered: []):
 def main():
 
     # Station 2: Feature Engineering
-    #  commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'], True)
-    #  commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'], True)
-    #  weather_features("Weather.csv", ['AvgTemp', 'Rainfall (mm)', 'max Wx', 'max Wy', '9am relative humidity (%)'], True)
-    #  cash_features("Client_Cash_Accounts.xlsx", ['1x', '2x', '3x', '4x', '5x'], ['Cash Balance'], True)
-    #  sentiment_features("Commodity_News.json", ['Headline'])
+    commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'], True)
+    commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'], True)
+    weather_features("Weather.csv", ['AvgTemp', 'Rainfall (mm)', 'max Wx', 'max Wy', '9am relative humidity (%)'], True)
+    cash_features("Client_Cash_Accounts.xlsx", ['1x', '2x', '3x', '4x', '5x'], ['Cash Balance'], True)
+    sentiment_features("Commodity_News.json", ['Headline'])
 
     pass
 

@@ -146,6 +146,10 @@ def sentiment_analysis(dataset):
     :param pandas.DataFrame dataset: Dataset to be used
     :return pandas.DataFrame dataset: Dataset with sentiment scores
     '''
+    #  for each in dataset['Headline']:
+    #      print(each)
+    #      print(sid.polarity_scores(each))
+
     dataset['Scores'] = dataset['Headline'].apply(lambda headline: sid.polarity_scores(headline))
 
     return dataset
@@ -193,12 +197,12 @@ def predict_cash_forward(dataset):
 def main():
 
     # Weather
-    #  avg_temp = weather_features("Weather.csv", ['AvgTemp', 'Rainfall (mm)', '9am relative humidity (%)', 'max Wx', 'max Wy'])
-    #  predict_temperature_forward(avg_temp)
+    avg_temp = weather_features("Weather.csv", ['AvgTemp', 'Rainfall (mm)', '9am relative humidity (%)', 'max Wx', 'max Wy'])
+    predict_temperature_forward(avg_temp)
 
     # Corn
-    #  corn_price = commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'])
-    #  predict_corn_forward(corn_price)
+    corn_price = commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'])
+    predict_corn_forward(corn_price)
 
     # Wheat
     wheat_price = commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'])
@@ -208,11 +212,12 @@ def main():
     # Sentiment
     commodity_news = sentiment_features("Commodity_News.json", ['Headline'])
     sentiment_analysis(commodity_news)
+    
 
     # Cash flows
-    #  cash_flows = cash_features("Client_Cash_Accounts.xlsx", ['1x', '2x', '3x', '4x', '5x'], ['Cash Balance'])
-    #  for client in cash_flows:
-    #      predict_cash_forward(cash_flows[client])
+    cash_flows = cash_features("Client_Cash_Accounts.xlsx", ['1x', '2x', '3x', '4x', '5x'], ['Cash Balance'])
+    for client in cash_flows:
+        predict_cash_forward(cash_flows[client])
 
 
 

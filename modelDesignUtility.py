@@ -8,11 +8,6 @@ BATCH_SIZE = 50
 BUFFER_SIZE = 1000
 STEP = 1
 
-TRAIN_SPLIT = 300
-PAST_HISTORY = 50
-FUTURE_TARGET = 10
-
-
 # Utility functions
 def multivariate_data(dataset, target, start, end, history_size, target_size, step, single_step=False):
 
@@ -108,7 +103,7 @@ def multi_step_plot(history, true_future, prediction):
     plt.show()
 
 
-def normalise_train_data(features) -> pd.DataFrame:
+def normalise_train_data(features, TRAIN_SPLIT: int) -> pd.DataFrame:
     '''
     This is a soft duplicate of plot_normalised from featureEngineering.py
     '''
@@ -135,7 +130,7 @@ class RNN_input:
         self.input_shape = input_shape
 
 
-def RNN_preprocessing(dataset, plot=False):
+def RNN_preprocessing(dataset, TRAIN_SPLIT: int, PAST_HISTORY: int, FUTURE_TARGET: int, plot=False):
     '''
     Preprocessing for RNN using multivariate data
     TODO - abbreviate function calls
@@ -143,6 +138,8 @@ def RNN_preprocessing(dataset, plot=False):
     :param pandas.DataFrame.values dataset: Normalised values of dataset
     :param bool plot: Set to true to plot dataset, false otherwise
     '''
+
+    dataset = normalise_train_data(dataset, TRAIN_SPLIT)
 
     x_train_multi, y_train_multi = multivariate_data(dataset, dataset[:, 0], 0,
                                                      TRAIN_SPLIT, PAST_HISTORY,

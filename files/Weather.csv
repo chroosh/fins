@@ -1,4 +1,4 @@
-Date,Minimum temperature (C),Maximum temperature (C),Rainfall (mm),Direction of maximum wind gust ,Speed of maximum wind gust (km/h),Time of maximum wind gust,9am Temperature (C),9am relative humidity (%),9am wind direction,9am wind speed (km/h),3pm Temperature (C),3pm relative humidity (%),3pm wind direction,3pm wind speed (km/h)
+Date,Minimum temperature (C),Maximum temperature (C),Rainfall (mm),Direction of maximum wind gust,Speed of maximum wind gust (km/h),Time of maximum wind gust,9am Temperature (C),9am relative humidity (%),9am wind direction,9am wind speed (km/h),3pm Temperature (C),3pm relative humidity (%),3pm wind direction,3pm wind speed (km/h)
 1/7/19,2.5,18.1,0,W,15,0:33,6.1,77,WNW,2,17.6,27,NNE,4
 2/7/19,3.2,22.4,0,NNW,31,14:16,7.7,68,NW,6,20,35,NNW,19
 3/7/19,6.3,17.4,0,S,24,13:52,12.4,53,SSW,4,14.6,84,S,15

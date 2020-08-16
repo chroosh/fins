@@ -42,18 +42,19 @@ Todo:
     - DONE basic LSTM RNN
     - TODO specific models for 
 			- commodities
-				- ISH feature selection
+				- ISH feature selection, prereq: sentiment
 				- ISH hyperparameter tuning
 			- weather
-				- feature selection
-				- hyperparameter tuning
-			- cash flow
-				- feature selection
-				- hyperparameter tuning
+				- DONE feature selection
+				- ISH hyperparameter tuning
 			- sentiment
 				- feature selection
 				- hyperparameter tuning
-
+			- cash flow
+				- feature selection, prereq: commodity, weather, sentiment
+					-  how do you use other models to do this?
+				- hyperparameter tuning
+		
     - DONE refactor model utility after implementing models
 - station 4: implementation
 	- model needs to predict next 10 values after last date in dataset

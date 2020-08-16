@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import json
 import os
@@ -110,6 +111,25 @@ def commodity_features(commodity_file: str, features_considered: [], plot=False)
     return features
 
 
+to_degrees = {
+    'N': 0,
+    'NNE': 22.5,
+    'NE': 45,
+    'ENE': 67.5,
+    'E': 90,
+    'ESE': 112.5,
+    'SE': 135,
+    'SSE': 157.5,
+    'S': 180,
+    'SSW': 202.5,
+    'SW': 225,
+    'WSW': 247.5,
+    'W': 270,
+    'WNW': 292.5,
+    'NW': 315,
+    'NNW': 337.5
+}
+
 def weather_features(weather_file: str, features_considered: [], plot=False) -> pd.DataFrame:
     '''
     Feature engineering (average temperature) for given weather data
@@ -125,6 +145,14 @@ def weather_features(weather_file: str, features_considered: [], plot=False) -> 
 
     # Given min/max temperature, take average
     df['AvgTemp'] = (df['Minimum temperature (C)'] + df['Maximum temperature (C)']) / 2
+    
+    # Calculate wind Wx, Wy
+    wd_deg = np.array([to_degrees[direction] for direction in df['Direction of maximum wind gust']])
+    wd_rad = wd_deg * np.pi / 180
+
+    df['max Wx'] = df['Speed of maximum wind gust (km/h)']* np.cos(wd_rad)
+    df['max Wy'] = df['Speed of maximum wind gust (km/h)']* np.sin(wd_rad)
+
     features = df[features_considered]
     features.index = df['Date']
 
@@ -177,9 +205,11 @@ def main():
     # Station 2: Feature Engineering
     #  commodity_features("WHEAT_pricehistory.csv", ['Last', 'Open Interest'], True)
     #  commodity_features("CORN_pricehistory.csv", ['Last', 'Open Interest'], True)
-    #  weather_features("Weather.csv", ['AvgTemp'], True)
+    #  weather_features("Weather.csv", ['AvgTemp', 'Rainfall (mm)', 'max Wx', 'max Wy', '9am relative humidity (%)'], True)
     #  cash_features("Client_Cash_Accounts.xlsx", ['1x', '2x', '3x', '4x', '5x'], ['Cash Balance'], True)
     #  sentiment_features("Commodity_News.json")
+
+    pass
 
 if __name__ == "__main__":
     main()
